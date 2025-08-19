@@ -1,0 +1,38 @@
+# Java & Gradle
+/build/
+/.gradle/
+/out/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDEs
+/.idea/
+*.iml
+*.ipr
+*.iws
+/.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# Misc
+*.swp
+*.swo
+
+# Node (if any frontend)
+/node_modules/
+
+# Generated files
+*.generated
+
+# AWS credentials (never commit real credentials)
+.aws/
