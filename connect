@@ -1,0 +1,3 @@
+#!/bin/zsh
+# Start the Spring Boot backend using Maven
+mvn spring-boot:run

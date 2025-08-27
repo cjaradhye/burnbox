@@ -5,7 +5,6 @@ package com.disposablemailservice.model;
 import lombok.Data;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbTtl;
 
 import java.time.Instant;
 
@@ -16,7 +15,6 @@ public class Mailbox {
     private String id;
     private String address;
     
-    @DynamoDbTtl
     private Instant expiryTime;
     
     private Instant createdAt;

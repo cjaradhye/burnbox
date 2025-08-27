@@ -1,6 +1,9 @@
+
 // Service for mailbox business logic.
 // Handles mailbox creation, deletion, and message retrieval.
 package com.disposablemailservice.service;
+
+import java.util.List;
 
 import com.disposablemailservice.model.Mailbox;
 import com.disposablemailservice.model.Message;

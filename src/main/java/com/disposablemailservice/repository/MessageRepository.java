@@ -21,7 +21,7 @@ public class MessageRepository {
     @Autowired
     public MessageRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
-        this.messageTable = dynamoDbEnhancedClient.table("Message", Message.class);
+        this.messageTable = dynamoDbEnhancedClient.table("Message", software.amazon.awssdk.enhanced.dynamodb.TableSchema.fromBean(Message.class));
     }
 
     public void save(Message message) {
@@ -35,7 +35,6 @@ public class MessageRepository {
 
     public void deleteByMailboxId(String mailboxId) {
         // TODO: Implement actual delete logic for all messages with mailboxId
-    }
     }
 
     public void deleteById(String id) {

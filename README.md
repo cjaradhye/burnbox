@@ -1,23 +1,20 @@
 # Disposable Email Service
 
 ## Overview
-The Disposable Email Service is a Spring Boot application that allows users to create temporary email mailboxes. Users can generate mailboxes with a specified lifespan, receive emails via AWS SES, and retrieve messages associated with their mailboxes. The service uses DynamoDB for storage and provides RESTful APIs for interaction.
+The Disposable Email Service is a Spring Boot application that allows users to create temporary email mailboxes. Users can generate mailboxes, receive emails via AWS SES, and retrieve messages associated with their mailboxes. The service uses DynamoDB for storage and provides RESTful APIs for interaction.
 
 ## Features
-- Create disposable mailboxes with configurable lifespans (5 minutes, 10 minutes, 1 hour).
-- Retrieve messages associated with a specific mailbox.
-- Manually delete mailboxes and their associated messages.
-- Integration with AWS SES for receiving emails.
-- Scheduled cleanup of expired mailboxes.
+- Create disposable mailboxes
+- Retrieve messages associated with a specific mailbox
+- Manually delete mailboxes and their associated messages
+- Integration with AWS SES for receiving emails
 
 ## Technologies Used
 - Spring Boot 3
 - Spring Web
-- Spring Data DynamoDB (via AWS SDK v2)
-- AWS SDK for SES (Simple Email Service)
+- AWS SDK v2 (DynamoDB, DynamoDB Enhanced, SES)
 - Lombok
-- Spring Boot Actuator
-- Spring Scheduler
+- Jakarta Mail
 
 ## Project Structure
 ```
@@ -41,7 +38,8 @@ disposable-email-service
 │       │               └── MessageRepository.java
 │       └── resources
 │           └── application.yml
-├── build.gradle
+├── pom.xml
+├── connect
 └── README.md
 ```
 
@@ -54,23 +52,26 @@ disposable-email-service
 
 2. Update the `application.yml` file with your AWS credentials, DynamoDB table names, and SES region.
 
-3. Build the project using Gradle:
+3. Build the project using Maven:
    ```
-   ./gradlew build
+   mvn clean install
    ```
 
 4. Run the application:
    ```
-   ./gradlew bootRun
+   ./connect
    ```
 
 ## API Endpoints
-- **POST /api/mailboxes**: Create a mailbox with a specified lifespan.
+- **POST /api/mailboxes**: Create a mailbox.
 - **GET /api/mailboxes/{id}/messages**: Retrieve all messages for a specific mailbox.
-- **DELETE /api/mailboxes/{id}**: Manually delete a mailbox and its messages.
+- **DELETE /api/mailboxes/{id}**: Delete a mailbox and its messages.
 
-## CORS Support
-The application is configured to allow CORS requests from frontend applications.
+## Additional Notes
+- The project was migrated from Gradle to Maven. All Gradle files were removed.
+- AWS DynamoDB and DynamoDbEnhancedClient beans are configured automatically.
+- A shell script `connect` is provided to start the backend easily.
+- If you see a login page, it is due to default Spring Security. The backend only exposes REST endpoints and does not serve a web UI.
 
 ## License
 This project is licensed under the MIT License.

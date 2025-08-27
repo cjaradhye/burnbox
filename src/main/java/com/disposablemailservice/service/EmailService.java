@@ -1,7 +1,6 @@
 // Service for processing incoming emails from AWS SES.
 // Parses and stores emails in the Message table.
 package com.disposablemailservice.service;
-
 import com.disposablemailservice.model.Message;
 import com.disposablemailservice.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ public class EmailService {
         this.messageRepository = messageRepository;
     }
 
-    public void handleIncomingEmail(MimeMessage mimeMessage, String mailboxId) throws IOException {
+    public void handleIncomingEmail(MimeMessage mimeMessage, String mailboxId) throws IOException, jakarta.mail.MessagingException {
         String subject = mimeMessage.getSubject();
         String sender = mimeMessage.getFrom()[0].toString();
         String body = mimeMessage.getContent().toString();
@@ -30,7 +29,7 @@ public class EmailService {
         message.setSubject(subject);
         message.setSender(sender);
         message.setBody(body);
-        
+    
         messageRepository.save(message);
     }
 }
