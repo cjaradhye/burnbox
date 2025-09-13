@@ -37,3 +37,4 @@ Thumbs.db
 
 # AWS credentials (never commit real credentials)
 .aws/
+src/main/resources/application.yml

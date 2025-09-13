@@ -8,7 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DisposableEmailServiceApplication {
 
+    private static org.springframework.context.ApplicationContext applicationContext;
+
     public static void main(String[] args) {
-        SpringApplication.run(DisposableEmailServiceApplication.class, args);
+        applicationContext = SpringApplication.run(DisposableEmailServiceApplication.class, args);
+    }
+
+    public static org.springframework.context.ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 }
