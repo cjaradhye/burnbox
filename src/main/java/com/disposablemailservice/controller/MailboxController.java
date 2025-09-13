@@ -5,6 +5,9 @@ package com.disposablemailservice.controller;
 import com.disposablemailservice.model.Mailbox;
 import com.disposablemailservice.model.Message;
 import com.disposablemailservice.service.MailboxService;
+
+import com.disposablemailservice.model.MailboxRequest;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +23,9 @@ public class MailboxController {
         this.mailboxService = mailboxService;
     }
 
-    @PostMapping
-    public ResponseEntity<Mailbox> createMailbox(@RequestParam("lifespan") String lifespan) {
-        Mailbox mailbox = mailboxService.createMailbox(lifespan);
+    @PostMapping("/create")
+    public ResponseEntity<Mailbox> createMailbox(@RequestBody MailboxRequest request) {
+        Mailbox mailbox = mailboxService.createMailbox(request.getLifespan(), request.isBurnAfterRead());
         return ResponseEntity.ok(mailbox);
     }
 
@@ -46,7 +49,8 @@ public class MailboxController {
                 java.util.Map.of(
                     "active", true,
                     "expiration", mailbox.getExpiryTime(),
-                    "burnAfterRead", false // TODO: add burnAfterRead field to Mailbox
+                    "burnAfterRead", false, // TODO: add burnAfterRead field to Mailbox
+                    "address", mailbox.getAddress()
                 )
             ))
             .orElse(ResponseEntity.status(404).body(java.util.Map.of("error", "Mailbox not found or expired")));

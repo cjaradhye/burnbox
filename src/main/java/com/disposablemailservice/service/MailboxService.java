@@ -27,11 +27,14 @@ public class MailboxService {
         this.messageRepository = messageRepository;
     }
 
-    public Mailbox createMailbox(String lifespan) {
+    public Mailbox createMailbox(int lifespan, boolean burnAfterRead) {
         Mailbox mailbox = new Mailbox();
-        mailbox.setAddress(generateUniqueAddress());
+        String mailboxId = generateUniqueId();
+        mailbox.setId(mailboxId);
+        mailbox.setAddress(generateUniqueAddress(mailboxId));
         mailbox.setCreatedAt(Instant.now());
         mailbox.setExpiryTime(calculateExpiryTime(lifespan));
+        mailbox.setBurnAfterRead(burnAfterRead);
         return mailboxRepository.save(mailbox);
     }
 
@@ -49,13 +52,18 @@ public class MailboxService {
         messageRepository.deleteByMailboxId(id);
     }
 
-    private String generateUniqueAddress() {
-        // Logic to generate a unique email address
-        return "unique-address@example.com";
+    private String generateUniqueId() {
+        // Generate a unique ID using timestamp and random number
+        return "mailbox_" + System.currentTimeMillis() + "_" + (int)(Math.random() * 1000);
     }
 
-    private Instant calculateExpiryTime(String lifespan) {
-        // Logic to calculate expiry time based on lifespan
-        return Instant.now().plusSeconds(300); // Default to 5 minutes for now
+    private String generateUniqueAddress(String mailboxId) {
+        // Use mailboxId and SES domain to generate unique email address
+        return mailboxId + "@nahneedpfft.com";
+    }
+
+    private Instant calculateExpiryTime(int lifespan) {
+        // Calculate expiry time in minutes
+        return Instant.now().plusSeconds(lifespan * 60L);
     }
 }

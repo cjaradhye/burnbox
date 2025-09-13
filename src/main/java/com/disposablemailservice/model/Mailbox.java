@@ -19,7 +19,17 @@ public class Mailbox {
     
     private Instant createdAt;
 
+    private boolean burnAfterRead;
+
     @DynamoDbPartitionKey
+    public String getMailboxId() {
+        return id;
+    }
+
+    public void setMailboxId(String mailboxId) {
+        this.id = mailboxId;
+    }
+
     public String getId() {
         return id;
     }
@@ -50,5 +60,13 @@ public class Mailbox {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isBurnAfterRead() {
+        return burnAfterRead;
+    }
+
+    public void setBurnAfterRead(boolean burnAfterRead) {
+        this.burnAfterRead = burnAfterRead;
     }
 }

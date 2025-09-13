@@ -5,6 +5,7 @@ package com.disposablemailservice.model;
 import lombok.Data;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @Data
 @DynamoDbBean
@@ -17,20 +18,29 @@ public class Message {
     private String attachments;
 
     @DynamoDbPartitionKey
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getMailboxId() {
         return mailboxId;
     }
 
     public void setMailboxId(String mailboxId) {
         this.mailboxId = mailboxId;
+    }
+
+    @DynamoDbSortKey
+    public String getMessageId() {
+        return id;
+    }
+
+    public void setMessageId(String messageId) {
+        this.id = messageId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getSubject() {

@@ -20,7 +20,7 @@ public class MailboxRepository {
         this.enhancedClient = DynamoDbEnhancedClient.builder()
                 .dynamoDbClient(dynamoDbClient)
                 .build();
-        this.mailboxTable = enhancedClient.table("Mailbox", TableSchema.fromBean(Mailbox.class));
+        this.mailboxTable = enhancedClient.table("mailboxes", TableSchema.fromBean(Mailbox.class));
     }
 
     public Mailbox save(Mailbox mailbox) {

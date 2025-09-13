@@ -21,7 +21,7 @@ public class MessageRepository {
     @Autowired
     public MessageRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
-        this.messageTable = dynamoDbEnhancedClient.table("Message", software.amazon.awssdk.enhanced.dynamodb.TableSchema.fromBean(Message.class));
+        this.messageTable = dynamoDbEnhancedClient.table("messages", software.amazon.awssdk.enhanced.dynamodb.TableSchema.fromBean(Message.class));
     }
 
     public void save(Message message) {
