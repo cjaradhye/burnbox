@@ -1,0 +1,72 @@
+# .dockerignore
+# Ignore build artifacts
+target/
+!target/*.jar
+
+# Ignore Maven wrapper jar
+.mvn/wrapper/maven-wrapper.jar
+
+# Ignore source control
+.git/
+.gitignore
+
+# Ignore documentation
+README.md
+*.md
+
+# Ignore Docker files
+Dockerfile*
+docker-compose*.yml
+
+# Ignore test files
+test_*.sh
+test_*.js
+test_*.py
+
+# Ignore environment files
+.env
+.env.*
+!.env.example
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Ignore node modules (if any)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore backup files
+*.bak
+*.backup
+
+# Ignore certificates
+*.pem
+*.key
+*.crt
+ssl/
+
+# Ignore local development files
+.local/
+.cache/
+
+# Ignore Maven local repository
+.m2/

@@ -27,7 +27,7 @@ public class EmailService {
         Message message = new Message();
         message.setMailboxId(mailboxId);
         message.setSubject(subject);
-        message.setSender(sender);
+        message.setFrom(sender);
         message.setBody(body);
     
         messageRepository.save(message);

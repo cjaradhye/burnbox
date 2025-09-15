@@ -1,5 +1,5 @@
 // DynamoDB model for an email message.
-// Fields: id, mailboxId, subject, sender, body, attachments.
+// Fields: id, mailboxId, subject, from, body, attachments, receivedAt.
 package com.disposablemailservice.model;
 
 import lombok.Data;
@@ -7,15 +7,19 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
+import java.time.Instant;
+import java.util.List;
+
 @Data
 @DynamoDbBean
 public class Message {
     private String id;
     private String mailboxId;
     private String subject;
-    private String sender;
+    private String from;
     private String body;
-    private String attachments;
+    private List<String> attachments;
+    private Instant receivedAt;
 
     @DynamoDbPartitionKey
     public String getMailboxId() {
@@ -51,12 +55,12 @@ public class Message {
         this.subject = subject;
     }
 
-    public String getSender() {
-        return sender;
+    public String getFrom() {
+        return from;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public String getBody() {
@@ -67,11 +71,19 @@ public class Message {
         this.body = body;
     }
 
-    public String getAttachments() {
+    public List<String> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(String attachments) {
+    public void setAttachments(List<String> attachments) {
         this.attachments = attachments;
+    }
+
+    public Instant getReceivedAt() {
+        return receivedAt;
+    }
+
+    public void setReceivedAt(Instant receivedAt) {
+        this.receivedAt = receivedAt;
     }
 }

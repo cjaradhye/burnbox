@@ -24,6 +24,8 @@ Thumbs.db
 
 # Environment
 .env
+.env.local
+.env.*.local
 
 # Misc
 *.swp

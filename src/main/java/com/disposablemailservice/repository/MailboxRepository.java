@@ -10,6 +10,9 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Repository
 public class MailboxRepository {
 
@@ -34,5 +37,15 @@ public class MailboxRepository {
 
     public void deleteById(String id) {
         mailboxTable.deleteItem(Key.builder().partitionValue(id).build());
+    }
+
+    public List<Mailbox> findByUserId(String userId) {
+        // Since we don't have a GSI for userId, we'll use a scan operation
+        // This is not ideal for large datasets but acceptable for this use case
+        return mailboxTable.scan()
+                .items()
+                .stream()
+                .filter(mailbox -> userId.equals(mailbox.getUserId()))
+                .collect(Collectors.toList());
     }
 }
