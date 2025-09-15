@@ -59,5 +59,8 @@ ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:+OptimizeStringConcat \
     -Djava.security.egd=file:/dev/./urandom"
 
+# Set Spring profile for Docker
+ENV SPRING_PROFILES_ACTIVE=docker
+
 # Run the application with PORT support for Render
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${PORT:-8080} -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${PORT:-8080} -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -jar /app/app.jar"]
