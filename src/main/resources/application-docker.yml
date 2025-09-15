@@ -1,7 +1,5 @@
 # Docker-specific Spring Boot configuration
 spring:
-  profiles:
-    active: docker
     
   # Database Configuration for Docker
   datasource:
