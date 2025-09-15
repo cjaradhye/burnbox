@@ -1,4 +1,4 @@
-# Multi-stage build for optimal image size
+# Multi-stage build optimized for Render
 FROM eclipse-temurin:17-jdk-alpine AS builder
 
 # Set working directory
@@ -24,7 +24,7 @@ COPY src ./src
 # Build the application
 RUN ./mvnw clean package -DskipTests -B
 
-# Production stage
+# Production stage - optimized for Render
 FROM eclipse-temurin:17-jre-alpine
 
 # Install curl for health checks and tzdata for timezone support
@@ -54,21 +54,20 @@ RUN chown appuser:appgroup /app/app.jar
 # Switch to non-root user
 USER appuser
 
-# Expose port
-EXPOSE 8080
+# Render uses PORT environment variable - expose it dynamically
+EXPOSE ${PORT:-8080}
 
-# Health check
+# Health check for Render - use PORT env var
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8080/actuator/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8080}/actuator/health || exit 1
 
-# JVM optimization for containers
+# JVM optimization for Render containers
 ENV JAVA_OPTS="-XX:+UseContainerSupport \
     -XX:MaxRAMPercentage=75.0 \
     -XX:+UseG1GC \
     -XX:+UseStringDeduplication \
     -XX:+OptimizeStringConcat \
-    -Djava.security.egd=file:/dev/./urandom \
-    -Dspring.profiles.active=prod"
+    -Djava.security.egd=file:/dev/./urandom"
 
-# Run the application
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+# Run the application with PORT support for Render
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${PORT:-8080} -jar /app/app.jar"]

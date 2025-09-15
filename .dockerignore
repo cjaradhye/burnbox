@@ -1,5 +1,5 @@
-# .dockerignore
-# Ignore build artifacts
+# .dockerignore - Optimized for Render
+# Ignore build artifacts (but keep target/*.jar)
 target/
 !target/*.jar
 
@@ -10,20 +10,21 @@ target/
 .git/
 .gitignore
 
-# Ignore documentation
+# Ignore documentation (except essential deployment docs)
 README.md
 *.md
+!DOCKER-DEPLOYMENT.md
 
-# Ignore Docker files
+# Ignore Docker files (avoid recursive Docker builds)
 Dockerfile*
 docker-compose*.yml
 
-# Ignore test files
+# Ignore test files (reduce image size)
 test_*.sh
 test_*.js
 test_*.py
 
-# Ignore environment files
+# Ignore environment files (security)
 .env
 .env.*
 !.env.example
@@ -58,7 +59,7 @@ yarn-error.log
 *.bak
 *.backup
 
-# Ignore certificates
+# Ignore certificates (security)
 *.pem
 *.key
 *.crt
@@ -68,5 +69,12 @@ ssl/
 .local/
 .cache/
 
-# Ignore Maven local repository
+# Ignore Maven local repository (reduces build time)
 .m2/
+
+# Ignore Render specific files (not needed in container)
+render.yaml
+
+# Ignore development scripts
+dev-start.sh
+build-and-run.sh

@@ -1,0 +1,49 @@
+# render.yaml - Infrastructure as Code for Render deployment
+services:
+  # Main Burnbox Backend Application
+  - type: web
+    name: burnbox-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: oregon
+    branch: prod
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: PORT
+        value: 8080
+      - key: DATABASE_URL
+        fromDatabase:
+          name: burnbox-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: burnbox-redis
+          property: connectionString
+      - key: RENDER_EXTERNAL_URL
+        fromService:
+          type: web
+          name: burnbox-backend
+          property: host
+    healthCheckPath: /actuator/health
+    domains:
+      - burnbox-api.onrender.com
+    
+  # Redis Cache Service
+  - type: redis
+    name: burnbox-redis
+    plan: starter
+    region: oregon
+    ipAllowList: []
+
+# PostgreSQL Database
+databases:
+  - name: burnbox-postgres
+    plan: starter
+    region: oregon
+    databaseName: burnbox
+    user: burnbox_user
