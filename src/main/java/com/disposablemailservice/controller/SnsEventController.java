@@ -1,6 +1,7 @@
 package com.disposablemailservice.controller;
 
 import com.disposablemailservice.service.EmailEventService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sns")
+@Profile("aws")
 public class SnsEventController {
     private final EmailEventService emailEventService;
 

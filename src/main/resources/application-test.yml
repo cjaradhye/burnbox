@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  
+  flyway:
+    enabled: false
+
+# AWS configuration - not provided, so DynamoDB beans won't be created
+# aws:
+#   access-key-id: not-provided
+#   secret-key: not-provided
+#   region: us-east-1
+
+# Kafka configuration
+app:
+  kafka:
+    enabled: false
+
+# Disable actuator security for testing
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  security:
+    enabled: false
+
+server:
+  port: 8082

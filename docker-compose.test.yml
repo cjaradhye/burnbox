@@ -1,6 +1,4 @@
 # Docker Compose for local testing with PostgreSQL
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres-test:
@@ -17,13 +15,16 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U burnbox_user -d burnbox"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
 
   # Burnbox Backend Application
   burnbox-app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: burnbox-backend-test
     depends_on:
       postgres-test:
@@ -43,8 +44,9 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 60s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
 
 volumes:
   postgres_test_data:

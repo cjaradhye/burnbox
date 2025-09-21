@@ -2,11 +2,13 @@ package com.disposablemailservice.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
 @Component
+@Profile("aws")
 public class DynamoDbTableInitializer implements CommandLineRunner {
 
     @Autowired

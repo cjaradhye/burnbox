@@ -4,6 +4,7 @@
 package com.disposablemailservice.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.disposablemailservice.model.Mailbox;
 import com.disposablemailservice.model.Message;
@@ -14,26 +15,37 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Optional;
 
 @Service
 public class MailboxService {
 
     private static final Logger log = LoggerFactory.getLogger(MailboxService.class);
-    private final MailboxRepository mailboxRepository;
-    private final MessageRepository messageRepository;
+    private final Optional<MailboxRepository> mailboxRepository;
+    private final Optional<MessageRepository> messageRepository;
     private final EventPublisherService eventPublisherService;
     
-    public MailboxService(MailboxRepository mailboxRepository, MessageRepository messageRepository, EventPublisherService eventPublisherService) {
+    public MailboxService(Optional<MailboxRepository> mailboxRepository, 
+                         Optional<MessageRepository> messageRepository, 
+                         EventPublisherService eventPublisherService) {
         this.mailboxRepository = mailboxRepository;
         this.messageRepository = messageRepository;
         this.eventPublisherService = eventPublisherService;
+        
+        log.info("🔧 [SERVICE INIT] MailboxService initialized:");
+        log.info("   📦 MailboxRepository available: {}", mailboxRepository.isPresent());
+        log.info("   📨 MessageRepository available: {}", messageRepository.isPresent());
+        log.info("   📡 EventPublisherService available: {}", eventPublisherService != null);
     }
     // private final S3Service s3Service;
 
     public Mailbox createMailbox(String userId, int lifespanDays, boolean burnAfterRead, String emailName) {
         log.info("🏭 [SERVICE STEP 1] Starting mailbox creation for user: {}", userId);
         log.info("📋 [SERVICE STEP 2] Parameters - lifespan: {} days, burnAfterRead: {}, emailName: {}", lifespanDays, burnAfterRead, emailName);
+        
+        if (mailboxRepository.isEmpty()) {
+            log.error("💥 [SERVICE ERROR] MailboxRepository is not available (DynamoDB not configured)");
+            throw new IllegalStateException("DynamoDB is not configured - mailbox creation not available. Please activate 'aws' profile.");
+        }
         
         try {
             Mailbox mailbox = new Mailbox();
@@ -62,7 +74,7 @@ public class MailboxService {
             log.info("🔥 [SERVICE STEP 9] Set burn after read: {}", burnAfterRead);
             
             log.info("💾 [SERVICE STEP 10] Saving mailbox to repository...");
-            Mailbox savedMailbox = mailboxRepository.save(mailbox);
+            Mailbox savedMailbox = mailboxRepository.get().save(mailbox);
             log.info("✅ [SERVICE STEP 11] Mailbox saved successfully with ID: {}", savedMailbox.getId());
             
             // Publish event
@@ -89,8 +101,13 @@ public class MailboxService {
     public Optional<Mailbox> getMailbox(String id) {
         log.info("🔍 [SERVICE STEP 1] Looking up mailbox with ID: {}", id);
         
+        if (mailboxRepository.isEmpty()) {
+            log.error("💥 [SERVICE ERROR] MailboxRepository is not available (DynamoDB not configured)");
+            return Optional.empty();
+        }
+        
         try {
-            Mailbox mailbox = mailboxRepository.findById(id);
+            Mailbox mailbox = mailboxRepository.get().findById(id);
             
             if (mailbox != null) {
                 log.info("✅ [SERVICE STEP 2] Mailbox found:");
@@ -112,7 +129,12 @@ public class MailboxService {
     }
 
     public Optional<Mailbox> getMailboxForUser(String id, String userId) {
-        Mailbox mailbox = mailboxRepository.findById(id);
+        if (mailboxRepository.isEmpty()) {
+            log.error("💥 [SERVICE ERROR] MailboxRepository is not available (DynamoDB not configured)");
+            return Optional.empty();
+        }
+        
+        Mailbox mailbox = mailboxRepository.get().findById(id);
         if (mailbox != null && mailbox.getUserId().equals(userId)) {
             return Optional.of(mailbox);
         }
@@ -122,9 +144,14 @@ public class MailboxService {
     public List<Mailbox> getAllMailboxesForUser(String userId) {
         log.info("📋 [SERVICE STEP 1] Getting all mailboxes for user: {}", userId);
         
+        if (mailboxRepository.isEmpty()) {
+            log.error("💥 [SERVICE ERROR] MailboxRepository is not available (DynamoDB not configured)");
+            return List.of();
+        }
+        
         try {
             log.info("🔍 [SERVICE STEP 2] Querying repository for user mailboxes...");
-            List<Mailbox> mailboxes = mailboxRepository.findByUserId(userId);
+            List<Mailbox> mailboxes = mailboxRepository.get().findByUserId(userId);
             
             log.info("📊 [SERVICE STEP 3] Found {} mailboxes for user {}", mailboxes.size(), userId);
             for (int i = 0; i < mailboxes.size(); i++) {
@@ -145,6 +172,11 @@ public class MailboxService {
     public List<Message> getMessagesByMailboxId(String mailboxId, String userId) {
         log.info("📨 [SERVICE STEP 1] Getting messages for mailbox: {}, user: {}", mailboxId, userId);
         
+        if (mailboxRepository.isEmpty() || messageRepository.isEmpty()) {
+            log.error("💥 [SERVICE ERROR] Required repositories are not available (DynamoDB not configured)");
+            return List.of();
+        }
+        
         try {
             // Verify mailbox belongs to user
             log.info("🔐 [SERVICE STEP 2] Verifying mailbox ownership...");
@@ -158,7 +190,7 @@ public class MailboxService {
             log.info("✅ [SERVICE STEP 3] Mailbox ownership verified for user: {}", userId);
             log.info("📮 [SERVICE STEP 4] Retrieving messages from repository...");
             
-            List<Message> messages = messageRepository.findByMailboxId(mailboxId);
+            List<Message> messages = messageRepository.get().findByMailboxId(mailboxId);
             
             log.info("📊 [SERVICE STEP 5] Found {} messages for mailbox {}", messages.size(), mailboxId);
             for (int i = 0; i < messages.size(); i++) {
@@ -178,6 +210,11 @@ public class MailboxService {
     public void deleteMailbox(String id, String userId) {
         log.info("🗑️ [SERVICE STEP 1] Starting mailbox deletion: {}, user: {}", id, userId);
         
+        if (mailboxRepository.isEmpty() || messageRepository.isEmpty()) {
+            log.error("💥 [SERVICE ERROR] Required repositories are not available (DynamoDB not configured)");
+            throw new IllegalStateException("DynamoDB is not configured - mailbox deletion not available. Please activate 'aws' profile.");
+        }
+        
         try {
             log.info("🔐 [SERVICE STEP 2] Verifying mailbox ownership...");
             Optional<Mailbox> mailbox = getMailboxForUser(id, userId);
@@ -194,7 +231,7 @@ public class MailboxService {
             
             // Get message count for event
             log.info("📊 [SERVICE STEP 4] Counting messages to delete...");
-            List<Message> messages = messageRepository.findByMailboxId(id);
+            List<Message> messages = messageRepository.get().findByMailboxId(id);
             int messagesDeleted = messages.size();
             log.info("📨 [SERVICE STEP 5] Found {} messages to delete", messagesDeleted);
             
@@ -222,11 +259,11 @@ public class MailboxService {
             
             // Delete messages and mailbox
             log.info("🗑️ [SERVICE STEP 11] Deleting messages from repository...");
-            messageRepository.deleteByMailboxId(id);
+            messageRepository.get().deleteByMailboxId(id);
             log.info("✅ [SERVICE STEP 12] Messages deleted successfully");
             
             log.info("🗑️ [SERVICE STEP 13] Deleting mailbox from repository...");
-            mailboxRepository.deleteById(id);
+            mailboxRepository.get().deleteById(id);
             log.info("✅ [SERVICE STEP 14] Mailbox deleted successfully");
             
             // Publish event

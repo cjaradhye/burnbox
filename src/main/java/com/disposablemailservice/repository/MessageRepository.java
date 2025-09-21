@@ -7,20 +7,18 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@Profile("aws")
 public class MessageRepository {
 
-    private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
     private final DynamoDbTable<Message> messageTable;
 
-    @Autowired
     public MessageRepository(DynamoDbEnhancedClient dynamoDbEnhancedClient) {
-        this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
         this.messageTable = dynamoDbEnhancedClient.table("messages", software.amazon.awssdk.enhanced.dynamodb.TableSchema.fromBean(Message.class));
     }
 
