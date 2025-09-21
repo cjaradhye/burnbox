@@ -12,23 +12,21 @@ services:
     startCommand: ""
     envVars:
       - key: SPRING_PROFILES_ACTIVE
-        value: render
-      - key: PORT
-        value: 8080
+        value: postgres
       - key: DATABASE_URL
         fromDatabase:
           name: burnbox-postgres
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: burnbox-redis
-          property: connectionString
-      - key: RENDER_EXTERNAL_URL
-        fromService:
-          type: web
-          name: burnbox-backend
-          property: host
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: CORS_ALLOWED_ORIGINS
+        value: "*"
     healthCheckPath: /actuator/health
     domains:
       - burnbox-api.onrender.com
