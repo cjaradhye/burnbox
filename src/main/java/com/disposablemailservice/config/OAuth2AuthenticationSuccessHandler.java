@@ -30,8 +30,8 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired(required = false)
     private JwtService jwtService;
     
-    @Value("${cors.allowed-origins}")
-    private String allowedOrigins;
+    @Value("${app.frontend.url:https://burnbox-spark.vercel.app}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -39,7 +39,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         
         if (userService == null || jwtService == null) {
             log.error("Required services not available for OAuth2 authentication");
-            String frontendUrl = allowedOrigins.split(",")[0];
             response.sendRedirect(frontendUrl + "/auth/error");
             return;
         }
@@ -59,9 +58,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             // Generate JWT token
             String jwt = jwtService.generateToken(user);
             
-            // Get the frontend URL (first allowed origin)
-            String frontendUrl = allowedOrigins.split(",")[0];
-            
             // Redirect to frontend with JWT token
             String redirectUrl = frontendUrl + "/auth/callback?token=" + URLEncoder.encode(jwt, StandardCharsets.UTF_8);
             
@@ -70,7 +66,6 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             
         } catch (Exception e) {
             log.error("Error processing OAuth2 authentication", e);
-            String frontendUrl = allowedOrigins.split(",")[0];
             response.sendRedirect(frontendUrl + "/auth/error");
         }
     }
