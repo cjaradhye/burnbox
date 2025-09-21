@@ -24,12 +24,4 @@ public class RootController {
             "status", "UP"
         );
     }
-
-    @GetMapping("/health")
-    public Map<String, String> health() {
-        return Map.of(
-            "status", "UP",
-            "service", "burnbox-backend"
-        );
-    }
 }
