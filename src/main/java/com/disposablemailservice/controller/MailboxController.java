@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/mailboxes")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
+@CrossOrigin(origins = {"https://burnbox-spark.vercel.app", "http://localhost:3000", "http://localhost:5173"})
 public class MailboxController {
 
     private static final Logger log = LoggerFactory.getLogger(MailboxController.class);

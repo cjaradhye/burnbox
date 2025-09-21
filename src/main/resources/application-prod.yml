@@ -141,7 +141,7 @@ app:
     secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION:86400000}
   frontend:
-    url: ${FRONTEND_URL:http://localhost:3000}
+    url: ${FRONTEND_URL:https://burnbox-spark.vercel.app}
   email:
     domain: ${EMAIL_DOMAIN:nahneedpfft.com}
   webhook:
@@ -149,7 +149,7 @@ app:
       verify-signature: ${SES_WEBHOOK_VERIFY_SIGNATURE:true}
 
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://yourdomain.com}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://burnbox-spark.vercel.app,http://localhost:3000}
   allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,DELETE,PUT,OPTIONS}
   allowed-headers: ${CORS_ALLOWED_HEADERS:Content-Type,Authorization,X-Requested-With}
   allow-credentials: true

@@ -41,7 +41,7 @@ JWT_EXPIRATION=86400000
 # 🌐 Application URLs
 EMAIL_DOMAIN=nahneedpfft.com
 FRONTEND_URL=https://your-frontend-app.onrender.com
-CORS_ALLOWED_ORIGINS=https://your-frontend-app.onrender.com,http://localhost:3000
+CORS_ALLOWED_ORIGINS=https://burnbox-spark.vercel.app,http://localhost:3000
 
 # ☁️ AWS (Optional)
 AWS_REGION=us-west-2
