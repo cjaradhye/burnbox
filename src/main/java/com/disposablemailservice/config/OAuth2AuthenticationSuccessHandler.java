@@ -58,11 +58,17 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
             // Generate JWT token
             String jwt = jwtService.generateToken(user);
             
-            // Redirect to frontend with JWT token
-            String redirectUrl = frontendUrl + "/auth/callback?token=" + URLEncoder.encode(jwt, StandardCharsets.UTF_8);
+            // Build redirect URL with all user information
+            StringBuilder redirectUrl = new StringBuilder(frontendUrl)
+                    .append("/auth/callback")
+                    .append("?token=").append(URLEncoder.encode(jwt, StandardCharsets.UTF_8))
+                    .append("&userId=").append(URLEncoder.encode(user.getUserId(), StandardCharsets.UTF_8))
+                    .append("&name=").append(URLEncoder.encode(name != null ? name : "", StandardCharsets.UTF_8))
+                    .append("&email=").append(URLEncoder.encode(email != null ? email : "", StandardCharsets.UTF_8))
+                    .append("&picture=").append(URLEncoder.encode(picture != null ? picture : "", StandardCharsets.UTF_8));
             
-            log.info("OAuth2 authentication successful for user: {}", email);
-            response.sendRedirect(redirectUrl);
+            log.info("OAuth2 authentication successful for user: {} (ID: {})", email, user.getUserId());
+            response.sendRedirect(redirectUrl.toString());
             
         } catch (Exception e) {
             log.error("Error processing OAuth2 authentication", e);
