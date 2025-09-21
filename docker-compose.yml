@@ -136,10 +136,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      dynamodb:
-        condition: service_started
-      kafka:
-        condition: service_healthy
+      # Remove Kafka/DynamoDB hard dependencies for postgres profile
+      # dynamodb:
+      #   condition: service_started
+      # kafka:
+      #   condition: service_healthy
     environment:
       # Spring Profile (default to postgres inside compose; use aws to enable hybrid mode)
       SPRING_PROFILES_ACTIVE: postgres
@@ -169,9 +170,9 @@ services:
       JWT_SECRET: ${JWT_SECRET:-your-256-bit-secret-key-here-make-it-very-long-and-secure-for-production-use-only-change-this-in-production}
       JWT_EXPIRATION: 86400000
       
-      # OAuth2
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      # OAuth2 (use defaults if env vars not provided)
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-135127202953-anhr5rlnk1oq1j6klrgea02oqbprbaaa.apps.googleusercontent.com}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-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}
       BASE_URL: ${BASE_URL:-http://localhost:8080}
       
       # AWS (optional for development)
