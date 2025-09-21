@@ -141,10 +141,14 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      # Spring Profile
-      SPRING_PROFILES_ACTIVE: prod
+      # Spring Profile (default to postgres inside compose; use aws to enable hybrid mode)
+      SPRING_PROFILES_ACTIVE: postgres
       
-      # Database
+      # Database (primary variables Spring Boot will pick up automatically)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/burnbox
+      SPRING_DATASOURCE_USERNAME: burnbox
+      SPRING_DATASOURCE_PASSWORD: password
+      # Backwards compatibility / legacy fallbacks (can remove later)
       DATABASE_URL: jdbc:postgresql://postgres:5432/burnbox
       DATABASE_USERNAME: burnbox
       DATABASE_PASSWORD: password
