@@ -1,0 +1,52 @@
+# Docker Compose for local testing with PostgreSQL
+services:
+  # PostgreSQL Database
+  postgres-test:
+    image: postgres:14
+    container_name: burnbox-postgres-test
+    environment:
+      POSTGRES_DB: burnbox
+      POSTGRES_USER: burnbox_user
+      POSTGRES_PASSWORD: burnbox_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U burnbox_user -d burnbox"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # Burnbox Backend Application
+  burnbox-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: burnbox-backend-test
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DATABASE_URL: jdbc:postgresql://postgres-test:5432/burnbox
+      DB_USERNAME: burnbox_user
+      DB_PASSWORD: burnbox_password
+      JWT_SECRET: my-super-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm
+      AWS_ACCESS_KEY_ID: ""
+      AWS_SECRET_ACCESS_KEY: ""
+      AWS_REGION: ap-south-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    restart: unless-stopped
+
+volumes:
+  postgres_test_data:

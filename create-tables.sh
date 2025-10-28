@@ -27,4 +27,3 @@ aws dynamodb create-table \
 
 echo "Tables created successfully!"
 echo "You can verify in the AWS Console: https://console.aws.amazon.com/dynamodb/"
-
